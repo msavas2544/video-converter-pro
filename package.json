@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "Modern, powerful video converter desktop app with FFmpeg. Features drag & drop, multiple formats, quality settings, and real-time progress tracking.",
   "main": "src/main/main.js",
-  "homepage": "https://github.com/[kullanici-adi]/video-converter-pro",
+  "homepage": "https://github.com/msavas2544/video-converter-pro",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/[kullanici-adi]/video-converter-pro.git"
+    "url": "git+https://github.com/msavas2544/video-converter-pro.git"
   },
   "bugs": {
-    "url": "https://github.com/[kullanici-adi]/video-converter-pro/issues"
+    "url": "https://github.com/msavas2544/video-converter-pro/issues"
   },
   "keywords": [
     "video",

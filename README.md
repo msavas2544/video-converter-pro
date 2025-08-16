@@ -34,7 +34,7 @@ Modern, gelişmiş video dönüştürücü masaüstü uygulaması. Electron + FF
 ### Adımlar
 ```bash
 # Repository'yi klonlayın
-git clone https://github.com/[kullanici-adi]/video-converter-pro.git
+git clone https://github.com/msavas2544/video-converter-pro.git
 cd video-converter-pro
 
 # Bağımlılıkları yükleyin
