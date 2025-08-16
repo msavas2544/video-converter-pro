@@ -1,0 +1,70 @@
+{
+  "name": "video-converter-pro",
+  "version": "1.0.0",
+  "description": "Modern, powerful video converter desktop app with FFmpeg. Features drag & drop, multiple formats, quality settings, and real-time progress tracking.",
+  "main": "src/main/main.js",
+  "homepage": "https://github.com/[kullanici-adi]/video-converter-pro",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/[kullanici-adi]/video-converter-pro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/[kullanici-adi]/video-converter-pro/issues"
+  },
+  "keywords": [
+    "video",
+    "converter",
+    "ffmpeg",
+    "electron",
+    "desktop",
+    "multimedia",
+    "video-processing",
+    "cross-platform"
+  ],
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "lint": "echo 'No lint script yet'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "electron-squirrel-startup": "^1.0.1",
+    "ffmpeg-static": "^5.2.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.3",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
+    "@electron-forge/cli": "^7.8.3",
+    "@electron-forge/maker-deb": "^7.8.3",
+    "@electron-forge/maker-rpm": "^7.8.3",
+    "@electron-forge/maker-squirrel": "^7.8.3",
+    "@electron-forge/maker-zip": "^7.8.3",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.3",
+    "@electron-forge/plugin-fuses": "^7.8.3",
+    "@electron-forge/plugin-webpack": "^7.8.3",
+    "@electron/fuses": "^1.8.0",
+    "@vercel/webpack-asset-relocator-loader": "^1.10.0",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "electron": "^37.3.0",
+    "html-webpack-plugin": "^5.6.4",
+    "node-loader": "^2.1.0",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.9.2",
+    "webpack": "^5.101.2",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
+}

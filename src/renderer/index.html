@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Converter</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        min-height: 100vh;
+      }
+
+      .app-container {
+        max-width: 800px;
+        margin: 20px auto;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .app-header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .app-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 2.5rem;
+        font-weight: 300;
+      }
+
+      .app-header p {
+        margin: 0;
+        opacity: 0.8;
+        font-size: 1.1rem;
+      }
+
+      .video-converter {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .file-drop-zone {
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        padding: 48px 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .file-drop-zone:hover {
+        border-color: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .drop-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .drop-icon {
+        font-size: 3rem;
+        opacity: 0.7;
+      }
+
+      .drop-content p {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      .drop-content small {
+        opacity: 0.7;
+        font-size: 0.9rem;
+      }
+
+      .selected-files {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        display: none;
+      }
+
+      .selected-files h3 {
+        margin: 0 0 16px 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+
+      .conversion-settings {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .setting-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .setting-group label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      .setting-group select {
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1rem;
+      }
+
+      .setting-group select option {
+        background: #333;
+        color: white;
+      }
+
+      .convert-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .convert-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .convert-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .progress-container {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 16px;
+        display: none;
+      }
+
+      .progress-label {
+        font-weight: 500;
+        margin-bottom: 12px;
+        text-align: center;
+      }
+
+      .progress-bar {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        height: 10px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+
+      .progress-fill {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+        width: 0%;
+      }
+
+      .progress-text {
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <h1>🎬 Video Converter</h1>
+        <p>Gelişmiş video dönüştürücü - Çoklu format desteği</p>
+      </header>
+
+      <div class="video-converter">
+        <div class="file-drop-zone" id="dropZone">
+          <div class="drop-content">
+            <div class="drop-icon">📁</div>
+            <p>Video dosyalarını buraya sürükleyin veya tıklayın</p>
+            <small>Desteklenen formatlar: MP4, AVI, MKV, MOV, FLV, WMV, WebM</small>
+          </div>
+          <input type="file" id="fileInput" multiple accept="video/*" style="display: none;">
+        </div>
+
+        <div class="selected-files" id="selectedFiles">
+          <h3 id="fileCount">Seçilen Dosyalar (0)</h3>
+          <div id="fileList"></div>
+        </div>
+
+        <div class="conversion-settings">
+          <div class="setting-group">
+            <label>Çıkış Formatı:</label>
+            <select id="outputFormat">
+              <option value="mp4">MP4 (H.264)</option>
+              <option value="avi">AVI</option>
+              <option value="mkv">MKV</option>
+              <option value="mov">MOV</option>
+              <option value="flv">FLV</option>
+              <option value="wmv">WMV</option>
+              <option value="webm">WebM</option>
+            </select>
+          </div>
+
+          <div class="setting-group">
+            <label>Kalite:</label>
+            <select id="quality">
+              <option value="low">Düşük Kalite (Küçük boyut)</option>
+              <option value="medium" selected>Orta Kalite</option>
+              <option value="high">Yüksek Kalite</option>
+              <option value="ultra">Ultra Kalite (Büyük boyut)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="convert-btn" id="convertBtn" disabled>
+          Dosya Seçin
+        </button>
+
+        <div style="text-align: center; margin-top: 16px;">
+          <small style="opacity: 0.7;">💡 Dönüştürülen videolar seçtiğiniz konuma kaydedilecek</small>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-label">Video dönüştürülüyor...</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text" id="progressText">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Electron IPC API
+      const { ipcRenderer } = require('electron');
+      
+      window.electronAPI = {
+        convertVideo: (data) => ipcRenderer.invoke('convert-video', data),
+        selectVideoFiles: () => ipcRenderer.invoke('select-video-files'),
+        openOutputFolder: (path) => ipcRenderer.invoke('open-output-folder', path)
+      };
+
+      // Progress listener
+      ipcRenderer.on('conversion-progress', (event, percent) => {
+        progressFill.style.width = percent + '%';
+        progressText.textContent = percent + '%';
+      });
+
+      let selectedFiles = [];
+      
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const selectedFilesDiv = document.getElementById('selectedFiles');
+      const fileList = document.getElementById('fileList');
+      const fileCount = document.getElementById('fileCount');
+      const convertBtn = document.getElementById('convertBtn');
+      const progressContainer = document.getElementById('progressContainer');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+
+      // Drag & Drop events
+      dropZone.addEventListener('click', async () => {
+        const result = await window.electronAPI.selectVideoFiles();
+        if (!result.canceled && result.filePaths.length > 0) {
+          const files = result.filePaths.map(filePath => ({
+            path: filePath,
+            name: require('path').basename(filePath),
+            size: require('fs').statSync(filePath).size
+          }));
+          handleFiles(files);
+        }
+      });
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+        dropZone.style.background = 'rgba(255, 255, 255, 0.1)';
+      });
+      
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+        dropZone.style.background = 'rgba(255, 255, 255, 0.05)';
+      });
+      
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+        dropZone.style.background = 'rgba(255, 255, 255, 0.05)';
+        
+        const files = Array.from(e.dataTransfer.files);
+        const videoFiles = files.filter(file => file.type.startsWith('video/'));
+        const filesWithPath = videoFiles.map(file => ({
+          path: file.path || file.name,
+          name: file.name,
+          size: file.size,
+          webFile: file
+        }));
+        handleFiles(filesWithPath);
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        const filesWithPath = files.map(file => ({
+          path: file.path || file.name, // Web dosyası için fallback
+          name: file.name,
+          size: file.size,
+          webFile: file // Gerçek file objesi
+        }));
+        handleFiles(filesWithPath);
+      });
+
+      function handleFiles(files) {
+        selectedFiles = files;
+        updateFileList();
+        updateConvertButton();
+      }
+
+      function updateFileList() {
+        if (selectedFiles.length === 0) {
+          selectedFilesDiv.style.display = 'none';
+          return;
+        }
+
+        selectedFilesDiv.style.display = 'block';
+        fileCount.textContent = `Seçilen Dosyalar (${selectedFiles.length})`;
+        
+        fileList.innerHTML = '';
+        selectedFiles.forEach((file, index) => {
+          const fileItem = document.createElement('div');
+          fileItem.className = 'file-item';
+          fileItem.innerHTML = `
+            <span class="file-name">${file.name}</span>
+            <span class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+            <button onclick="removeFile(${index})" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 24px; height: 24px; border-radius: 50%; cursor: pointer;">✕</button>
+          `;
+          fileList.appendChild(fileItem);
+        });
+      }
+
+      function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        updateFileList();
+        updateConvertButton();
+      }
+
+      function updateConvertButton() {
+        if (selectedFiles.length === 0) {
+          convertBtn.textContent = 'Dosya Seçin';
+          convertBtn.disabled = true;
+        } else {
+          convertBtn.textContent = `${selectedFiles.length} Dosyayı Dönüştür`;
+          convertBtn.disabled = false;
+        }
+      }
+
+      convertBtn.addEventListener('click', async () => {
+        if (selectedFiles.length === 0) return;
+        
+        convertBtn.disabled = true;
+        convertBtn.textContent = 'Dönüştürülüyor...';
+        progressContainer.style.display = 'block';
+        
+        try {
+          for (let i = 0; i < selectedFiles.length; i++) {
+            const file = selectedFiles[i];
+            const outputFormat = document.getElementById('outputFormat').value;
+            const quality = document.getElementById('quality').value;
+            
+            // Dosya yolu kontrolü
+            if (!file.path || file.path === file.name) {
+              alert('Bu dosya türü desteklenmiyor. Lütfen bilgisayarınızdan dosya seçin.');
+              continue;
+            }
+            
+            console.log('Converting file:', file.path);
+            
+            // Gerçek video dönüştürme
+            const result = await window.electronAPI.convertVideo({
+              inputPath: file.path,
+              outputFormat: outputFormat,
+              quality: quality
+            });
+            
+            if (result.success) {
+              console.log('Dönüştürme tamamlandı:', result.outputPath);
+              
+              // Dosya konumunu göster butonu ekle
+              const openFolderBtn = document.createElement('button');
+              openFolderBtn.textContent = 'Klasörü Aç';
+              openFolderBtn.onclick = () => window.electronAPI.openOutputFolder(result.outputPath);
+              openFolderBtn.style.cssText = 'margin: 10px; padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;';
+              
+              // Progress container'a ekle
+              progressContainer.appendChild(openFolderBtn);
+              
+            } else {
+              alert('Dönüştürme hatası: ' + result.message);
+            }
+          }
+          
+          alert('Dönüştürme işlemi tamamlandı!');
+          
+        } catch (error) {
+          console.error('Conversion error:', error);
+          alert('Dönüştürme sırasında hata oluştu: ' + error.message);
+        }
+        
+        // İşlem tamamlandı
+        convertBtn.disabled = false;
+        convertBtn.textContent = 'Başka Video Dönüştür';
+      });
+
+      // Make removeFile function global
+      window.removeFile = removeFile;
+    </script>
+  </body>
+</html>
